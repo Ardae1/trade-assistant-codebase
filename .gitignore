@@ -1,0 +1,6 @@
+*.yaml
+*.DS_Store
+*.idea
+*.ipynb_checkpoints
+*.vscode
+*.pyc
