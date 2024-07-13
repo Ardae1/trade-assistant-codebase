@@ -1,6 +1,6 @@
 import yaml
 import pandas as pd
-from logs import SingletonLogger
+from helpers.logs import SingletonLogger
 
 
 class Config:
@@ -19,7 +19,7 @@ class Config:
         self.BINANCE_API_SECRET_PATH = self.config_data["binance"]["api_secret"]
         self.BINANCE_API_FUTURE_URL = self.config_data["binance"]["futures_api_url"]
         self.BINANCE_API_SPOT_URL = self.config_data["binance"]["spot_api_url"]
-        self.COINLIST_PATH = self.config_data["coinlist"]["path"]
+        self.COINLIST_PATH = self.config_data["coinlist"]["w_parity"]
 
     def load_config(self):
         with open("config.yaml", "r") as file:
@@ -78,5 +78,8 @@ class Config:
     def get_1d_btc_excel_file(self):
         return self.get_excel_data("1d_btc")
 
-    def get_coin_list(self):
-        return self.get_file_path("path")
+    def get_coin_list_w_parity(self):
+        return self.get_file_path("w_parity")
+    
+    def get_coin_list_wo_parity(self):
+        return self.get_file_path("wo_parity")

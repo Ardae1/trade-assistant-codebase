@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
-from excel_db_main import ExcelParserClass
+from services.excel_db_main import ExcelParserClass
 import math
-import logging
+#import logging
+from helpers.logs import SingletonLogger
 
 
 class EMACalculationClass:
@@ -10,7 +11,9 @@ class EMACalculationClass:
         self.parity = parity
         self.api_data = api_data
         self.excel_data = excel_data
-        logging.info("EMA Calculation Instance initialized..")
+        self.logger= SingletonLogger.get_logger()
+        self.logger.info("EMA Calculation Instance initialized..")
+        
 
     # finds corresponding conditions for each given EMA movements.
     def find_condition(self):
@@ -493,12 +496,14 @@ class EMACalculationClass:
             )
 
             df.set_index("time", inplace=True)
-            logging.info("Unique EMA Conditions were scanned and collected..")
+            self.logger.info("Unique EMA Conditions were scanned and collected..")
+            #logging.info("Unique EMA Conditions were scanned and collected..")
             return df
 
         except KeyError as e:
             error_message = f"KeyError occurred: {e}"
-            logging.error(error_message, exc_info=True)
+            self.logger.error(error_message, exc_info=True)
+            #logging.error(error_message, exc_info=True)
             raise ValueError(error_message)
 
     # combines RSI ranges for a given coin and counts candles after ema21 crossdown ()
@@ -882,13 +887,14 @@ class EMACalculationClass:
                     ema21_down_dict[db_name] = ema21_down[-1]
                 else:
                     ema21_down_dict[db_name] = " No EMA 21 Cross down observed.. "
-
-            logging.info("Count candle operations were succesfully completed..")
+            self.logger.info("Count candle operations were succesfully completed..")
+            #logging.info("Count candle operations were succesfully completed..")
             return ema21_down_dict
 
         except KeyError as e:
             error_message = f"KeyError occurred: {e}"
-            logging.error(error_message, exc_info=True)
+            self.logger.error(error_message, exc_info=True)
+            #logging.error(error_message, exc_info=True)
             raise ValueError(error_message)
 
     def count_candles_r(self, rsi_freq):
@@ -1344,13 +1350,14 @@ class EMACalculationClass:
                     desired_dict[db_name] = (
                         "support levels are not valid since no cross down is observed.."  # or handle empty DataFrame as you see fit
                     )
-
-            logging.info("Support Levels were succesfully calculated..")
+            self.logger.info("Support Levels were succesfully calculated..")
+            #logging.info("Support Levels were succesfully calculated..")
             return desired_dict
 
         except KeyError as e:
             error_message = f"KeyError occurred: {e}"
-            logging.error(error_message, exc_info=True)
+            self.logger.error(error_message, exc_info=True)
+            #logging.error(error_message, exc_info=True)
             raise ValueError(error_message)
 
     def resistance_finder(self):
@@ -1418,7 +1425,8 @@ class EMACalculationClass:
                 desired_dict[db_name] = (
                     "resistance levels are not valid since no cross up is observed.."
                 )
-        logging.info("Support levels were calculated..")
+        self.logger.info("Support levels were calculated..")        
+        #logging.info("Support levels were calculated..")
         return desired_dict
 
     def find_key_levels(self):
@@ -1440,7 +1448,8 @@ class EMACalculationClass:
 
         except KeyError as e:
             error_message = f"KeyError occurred: {e}"
-            logging.error(error_message, exc_info=True)
+            self.logger.error(error_message, exc_info=True)
+            #logging.error(error_message, exc_info=True)
             raise ValueError(error_message)
 
     def calculate_key_levels(self, binance_data):
@@ -1513,11 +1522,16 @@ class EMACalculationClass:
                     data_dict.append(
                         f"Current price is %{round(percentage_5,3)} above the previous week high price"
                     )
-
-            logging.info("Key levels were calculated..")
+            self.logger.info("Key levels were calculated..")
+            #logging.info("Key levels were calculated..")
             return data_dict
 
         except KeyError as e:
             error_message = f"KeyError occurred: {e}"
-            logging.error(error_message, exc_info=True)
+            self.logger.error(error_message, exc_info=True)
+            #logging.error(error_message, exc_info=True)
             raise ValueError(error_message)
+        
+    
+
+

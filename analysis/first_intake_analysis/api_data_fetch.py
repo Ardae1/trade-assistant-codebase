@@ -10,9 +10,7 @@ import os
 import sys
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
-
-sys.path.append("/Users/ardaerkan/Documents/MİGRATE/Python/Arda_Trade_Assistant")
-from config import Config
+from configs.config import Config
 from functools import partial
 
 
@@ -248,17 +246,19 @@ class BinanceDataHelper:
             last_row = len(df_existing) + 1
             print("processing xlsx..")
             for numb, (index, row) in enumerate(result.iterrows()):
-                for col_num, value in enumerate(row, 1):
+                ws.cell(row=last_row + numb, column=1, value=index)
+                for col_num, value in enumerate(row, 2):
                     ws.cell(row=last_row + numb, column=col_num, value=value)
             excel_book.save(filename)
             print("xlsx file success..")
         else:
+            print("csv file..")
             existing_df = pd.read_csv(
                 "/Users/ardaerkan/Documents/MİGRATE/Python/Trade_Assistant_Files/Bookdene.csv"
             )
             last_index = len(existing_df)
             existing_df = pd.concat([existing_df, result], axis=0)
-            existing_df.iloc[last_index:].to_csv(
+            existing_df.to_csv(
                 "/Users/ardaerkan/Documents/MİGRATE/Python/Trade_Assistant_Files/Bookdene.csv",
                 mode="a",
                 header=False,
@@ -305,9 +305,9 @@ class BinanceDataHelper:
 if __name__ == "__main__":
 
     START_DATE = "2023-06-01"
-    END_DATE = "2024-04-15"
+    END_DATE = "2024-06-08"
     CONTRACT = "spot"
-    COINS = ["LINK"]
+    COINS = ["AVAX"]
     data_fetcher = BinanceDataHelper()
     result = data_fetcher.main_executor(CONTRACT, START_DATE, END_DATE, COINS)
     print(result)

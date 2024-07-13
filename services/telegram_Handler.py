@@ -4,9 +4,9 @@ from github import Github
 from fpdf import FPDF
 from io import BytesIO
 from urllib.parse import quote_plus
-from config import Config
-from excel_db_main import ExcelParserClass
-from logs import SingletonLogger
+from configs.config import Config
+from services.excel_db_main import ExcelParserClass
+from helpers.logs import SingletonLogger
 
 
 class GithubPDFError(Exception):

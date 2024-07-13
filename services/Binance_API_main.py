@@ -1,9 +1,9 @@
 import pandas as pd
 from binance.client import Client
 import time
-from config import Config
-from time_zone_adapter import TimeZoneAdapter
-from logs import SingletonLogger
+from configs.config import Config
+from services.time_zone_adapter import TimeZoneAdapter
+from helpers.logs import SingletonLogger
 
 
 class BinanceConnectionError(Exception):
@@ -130,7 +130,7 @@ class BinanceDataCollector:
         else:
             parity_list = [parite_usdt, parite_btc]
 
-        limit = 700
+        limit = 400
         intervals = [
             self.client.KLINE_INTERVAL_15MINUTE,
             self.client.KLINE_INTERVAL_1HOUR,
@@ -166,7 +166,7 @@ class BinanceDataCollector:
                 raise ValueError(error_message)
 
         except Exception as e:
-            error_message = f"An unexpected error occurred during data collection: {e}"
+            error_message = f"An unexpected error occurred during data collection for coin: {self.parity} - {e}"
             self.logger.error(error_message, exc_info=True)
             raise ValueError(error_message)
 

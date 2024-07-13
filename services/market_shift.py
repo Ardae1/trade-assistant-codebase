@@ -1,7 +1,5 @@
 import pandas as pd
-
-import logging
-from logs import SingletonLogger
+from helpers.logs import SingletonLogger
 
 
 class MarketShiftAnalyzer:
@@ -10,6 +8,7 @@ class MarketShiftAnalyzer:
         self.api_data = api_data
         self.logger.info("Market shift Instance initialized..")
 
+    # does anaylsis based on close price
     def find_market_shift_close(self):
         try:
             db_cond_satisfied = {}
@@ -43,6 +42,7 @@ class MarketShiftAnalyzer:
             self.logger.error(error_message, exc_info=True)
             raise ValueError(error_message)
 
+    # does anaylsis based on low price
     def find_market_shift_sensitive(self):
         try:
             db_cond_satisfied = {}

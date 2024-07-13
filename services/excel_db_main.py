@@ -1,10 +1,10 @@
-from config import Config
-from time_zone_adapter import TimeZoneAdapter
+from configs.config import Config
+from services.time_zone_adapter import TimeZoneAdapter
 import pandas as pd
 import ast
-from Binance_API_main import BinanceDataCollector
+from services.Binance_API_main import BinanceDataCollector
 
-from logs import SingletonLogger
+from helpers.logs import SingletonLogger
 
 
 class ExcelParserClass:
@@ -319,7 +319,7 @@ class ExcelParserClass:
 
     def daily_range_calc(self, api_data):
         try:
-            range1 = pd.to_datetime(["02:45", "19:15"]).time
+            range1 = pd.to_datetime(["02:45", "23:45"]).time
 
             try:
                 opening_price = api_data[f"{self.parity}USDT-1h"][
@@ -358,6 +358,8 @@ class ExcelParserClass:
             daily_range_h = None
             daily_status = []
 
+            latest_data = api_data[f"{self.parity}USDT-15m"].iloc[-1]
+
             if opening_price < range_max:
                 price_range_percent = self.excel_run_bear_bul()["usdt"]
                 price_range = [
@@ -376,7 +378,7 @@ class ExcelParserClass:
                     & (range_price["low"] <= price_range[-1])
                 ]
 
-                if high_in_range.empty and close_in_range.empty or low_in_range.empty:
+                if high_in_range.empty and close_in_range.empty and low_in_range.empty:
 
                     daily_status.append(
                         "We are not in a bearish short range for an entry level"
@@ -396,9 +398,23 @@ class ExcelParserClass:
                         [high_in_range, close_in_range, low_in_range]
                     ).drop_duplicates()
 
-                    daily_status.append(
-                        f"We are in a bearish short range by {in_range.iloc[0]['time']} for an entry level"
-                    )
+                    if (
+                        (latest_data["close"] >= price_range[0])
+                        and (latest_data["close"] <= price_range[-1])
+                        and (latest_data["time"] == in_range.iloc[-1]["time"])
+                    ):
+                        daily_status.append(
+                            f"Price is in a bearish short range since {in_range.iloc[0]['time']} for an entry level!"
+                        )
+                    elif (
+                        (latest_data["close"] < price_range[0])
+                        or (latest_data["close"] > price_range[0])
+                        and (in_range.iloc[0]["time"] != in_range.iloc[-1]["time"])
+                    ):
+                        daily_status.append(
+                            f"Price were in a bearish short range between {in_range.iloc[0]['time']} - {in_range.iloc[-1]['time']} for an entry level"
+                        )
+
                     daily_high = range_max
 
                     if daily_high:
@@ -449,9 +465,23 @@ class ExcelParserClass:
                         [low_in_range2, close_in_range2, high_in_range2]
                     ).drop_duplicates()
 
-                    daily_status.append(
-                        f"We are in a bullish long range by {in_range.iloc[0]['time']} for an entry level"
-                    )
+                    if (
+                        (latest_data["close"] <= price_range2[0])
+                        and (latest_data["close"] >= price_range2[-1])
+                        and (latest_data["time"] == in_range.iloc[-1]["time"])
+                    ):
+                        daily_status.append(
+                            f"Price is in a bullish long range since {in_range.iloc[0]['time']} for an entry level!"
+                        )
+                    elif (
+                        (latest_data["close"] > price_range[0])
+                        or (latest_data["close"] < price_range[0])
+                        and (in_range.iloc[0]["time"] != in_range.iloc[-1]["time"])
+                    ):
+                        daily_status.append(
+                            f"Price was in a bullish long range between {in_range.iloc[0]['time']} - {in_range.iloc[-1]['time']} for an entry level"
+                        )
+
                     daily_low = range_min
 
                     if daily_low:

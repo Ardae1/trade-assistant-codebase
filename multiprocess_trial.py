@@ -3,13 +3,13 @@ import stockstats as st
 from urllib.parse import quote_plus
 import time
 from functools import partial
-from excel_db_main import ExcelParserClass
-from ema_conditional_calculations import EMACalculationClass
-from config import Config
-from Binance_API_main import BinanceDataCollector
-from telegram_Handler import telegramHandler
-from point_calculation_helper import calculationHelper
-from market_shift import MarketShiftAnalyzer
+from services.excel_db_main import ExcelParserClass
+from services.ema_conditional_calculations import EMACalculationClass
+from configs.config import Config
+from services.Binance_API_main import BinanceDataCollector
+from services.telegram_Handler import telegramHandler
+from services.point_calculation_helper import calculationHelper
+from services.market_shift import MarketShiftAnalyzer
 
 
 def indicator_data_load(dblist):
@@ -173,7 +173,7 @@ if __name__ == "__main__":
         "FLM",
     ]
 
-    num_cores = 7
+    num_cores = 5
 
     start_time = time.time()
 
